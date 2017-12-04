@@ -10,24 +10,39 @@ class CreditCardValidator
   end
 
   def is_valid?
-    checksum = calc_checksum
+    checksum = luhn_checksum
     checksum % 10 == 0
   end
 
   private
 
-    def calc_checksum
-      sum_digits.inject(:+)
+    def luhn_checksum
+      sum_digits_array.inject(:+)
     end
 
-    def sum_digits
-      cc_number_modulo = cc_number.length % 2
+    def sum_digits_array
       cc_number.split("").map.with_index do |digit, i|
-        if (i % 2) == cc_number_modulo
-          (digit.to_i * 2).to_s.split("").map(&:to_i).inject(:+)
-        else
-          digit.to_i
-        end
+        sum_digit(digit: digit.to_i, index: i)
       end
+    end
+
+    def sum_digit(digit:, index:)
+      if (index % 2) == cc_number_modulo
+        double_sum_digit(double_digit: digit * 2)
+      else
+        digit
+      end
+    end
+
+    def double_sum_digit(double_digit:)
+      if double_digit <= 9
+        double_digit
+      else
+        double_digit - 9
+      end
+    end
+
+    def cc_number_modulo
+      cc_number.length % 2
     end
 end
