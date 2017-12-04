@@ -27,7 +27,7 @@ class CreditCardValidator
     end
 
     def sum_digit(digit:, index:)
-      if (index % 2) == cc_number_modulo
+      if index_should_double_sum?(index)
         double_sum_digit(double_digit: digit * 2)
       else
         digit
@@ -40,6 +40,10 @@ class CreditCardValidator
       else
         double_digit - 9
       end
+    end
+
+    def index_should_double_sum?(index)
+      (index % 2) == cc_number_modulo
     end
 
     def cc_number_modulo
